@@ -1,0 +1,180 @@
+=================================
+
+Muninwalk Readme
+
+================================
+ 
+Masahito Zembutsu (@zembutsu)
+http://github.com/zembutsu/
+
+* What is 'muninwalk'?
+
+Muninwalk is CLI(Command-Line interface for Munin). This behavior like snmpwalk.
+A difference of snmpwalk is to collect data from munin-node(TCP Port4949).
+This tool written in perl will be useful for your operation.
+
+Munin is a a networked resource monitoring tool. 
+http://munin-monitoring.org/
+
+
+* Requirements
+
+- OS: Linux 
+- Perl 5.x
+-- Modules  IO::Socket and Time::HiRes 
+- munin-node
+
+I'm now developing on Red Hat Enteprise Linux 5.
+
+
+* Usage
+
+Most of muninwalk and muninget are the same structure,
+but roles are different.
+
+- muninwalk - to collect the several information of one host
+- muninget  - continue collecting one information from sevral hosts
+
+
+$ muninwalk
+No hostname specified.
+USAGE: muninwalk <HOSTNAME[:PORT]> COMMAND [COMMAND...] [OPTION]
+
+  Version: 0.0.1
+  Github:  http://github.com/zembutsu/
+  Web:     http://pocketstudio.jp/
+  Email:   zem@pocketstudio.jp
+
+COMMAND:
+  list                display node enable plugins
+  nodes               dispaly nodes
+  <plugins names>     fetch data
+  version             display munin-node's version
+  walk                walkmode (fetch all plugins data)
+
+OPTION:
+  -c[char]            change delimiter
+  -d                  debug mode
+  -h                  display this help message
+  -v                  version
+
+
+	You must spcified target host, then you can see plugins name. 
+
+	$ muninwalk localhost
+	acpi apache_accesses apache_processes .... yum
+
+	This is as same as 'LIST' over munin protocol.
+
+
+	Please, type 'walk'. It's typically working.
+	This is original mode for munin that get LIST and Fetching all data. 
+
+	$ muninwalk localhost walk
+	## WALKMODE ##
+	localhost::acpi.* = proc
+	localhost::apache_accesses.accesses80 = 16023636
+	localhost::apache_processes.busy80 = 2
+	localhost::apache_processes.idle80 = 14
+	localhost::apache_processes.free80 = 1240
+	localhost::apache_volume.volume80 = 218319014912
+	localhost::cpu.user = 102389306
+	localhost::cpu.nice = 40457009
+	localhost::cpu.system = 22013272
+	(snip)
+
+	If you want to get a value of Load Average,
+
+	$ muninwalk localhost load
+	localhost::load.load = 0.28	
+
+	If you want to get a value of Load Average and cpu status,
+
+	$ muninwalk localhost load cpu
+	localhost::load.load = 0.28
+	localhost::cpu.user = 102390872
+	localhost::cpu.nice = 40457009
+	localhost::cpu.system = 22013642
+	localhost::cpu.idle = 1975949071
+	localhost::cpu.iowait = 49672118
+	localhost::cpu.irq = 262710
+	localhost::cpu.softirq = 1496958
+	localhost::cpu.steal = 0
+
+	The case, you want to check only 'cpu.iowait':
+
+	$ muninwalk localhost cpu.iowait
+	localhost::cpu.iowait = 49672379
+            
+	Note: 'watch' comannd might be helpls you. 
+
+$ muninget
+No hostname specified.
+USAGE: muninget <HOSTNAME[:PORT]> COMMAND [COMMAND...] [OPTION]
+
+  Version: 0.0.1
+  Github:  http://github.com/zembutsu/
+  Web:     http://pocketstudio.jp/
+  Email:   zem@pocketstudio.jp
+
+COMMAND:
+  list                display enable plugins
+  nodes               dispaly nodes
+  <plugins names>     fetch data
+  version             display version
+
+OPTION:
+  -c[char]            change delimiter
+  -d                  debug mode
+  -h                  display this help message
+  -v                  version
+
+	If you want to continue collecting data (ex, load), 
+
+	$ muninget localhost load
+	12/04/11 21:41:06.084646::localhost::load.load = 0.16
+	12/04/11 21:41:07.136572::localhost::load.load = 0.16
+
+	'Ctrl+C' can stop this script.
+
+	Do you need several hosts data? (ex, hostname node1 and node2 )
+
+	$ muninget node1,node2 load
+	12/04/11 21:42:51.895727::node1::load.load = 0.67
+	12/04/11 21:42:51.946590::node2::load.load = 0.13
+	12/04/11 21:42:53.000443::node1::load.load = 0.66
+	12/04/11 21:42:53.051397::node2::load.load = 0.13
+
+	If you want to change loop interval, you should use '-s' option.
+
+	$ munin node1,node2 load -s0.5     (-s<sec>)
+	12/04/11 21:44:55.674071::node1::load.load = 0.57
+	12/04/11 21:44:55.724940::node2::load.load = 0.12
+	12/04/11 21:44:56.280103::node1::load.load = 0.57
+	12/04/11 21:44:56.331063::node2::load.load = 0.12
+
+* Use case
+
+- network and server operation
+- debugging munin plugins
+
+
+* Known bug's
+
+- not support hierarchization munin plugins 
+
+
+* Tasks/Plans 
+
+- support hierachization munin plugins
+- formatting output ( for human readable )
+
+* Feedback
+
+- welcome!
+
+
+* History
+
+Apr 11, 2011  1st release.
+
