@@ -16,6 +16,8 @@ This tool written in perl will be useful for your operation.
 Munin is a a networked resource monitoring tool. 
 http://munin-monitoring.org/
 
+muninwalk の日本語ドキュメントは、こちらのエントリをご覧下さい。
+http://pocketstudio.jp/log3/2012/04/13/muninwalk_and_muninget/
 
 * Requirements
 
