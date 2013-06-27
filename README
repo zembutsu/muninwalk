@@ -59,6 +59,7 @@ OPTION:
   -d                  debug mode
   -h                  display this help message
   -v                  version
+  -z                  zabbix integrate mode
 
 
 	You must spcified target host, then you can see plugins name. 
