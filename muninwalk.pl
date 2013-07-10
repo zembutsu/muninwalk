@@ -16,6 +16,7 @@ use IO::Socket;
 $| = 1;
 
 my $DEBUG = 0;
+my $zintegrate = 0;
 my $option;
 
 # check args
@@ -65,6 +66,8 @@ if ($option) {
 		exit;
 	} elsif ($option eq 'c') {
 		$delimiter = ',';
+	} elsif ($option eq 'z') {
+		$zintegrate = 1;
 	}
 }
 
@@ -135,7 +138,11 @@ sub muninFetch {
 #					print $Munin{HOST}."::".$fetch.".".$1.$delimiter.$3."\n" if ($1 eq $obj);
 				} else {
 					print "----- cp: $fetch\n" if ($DEBUG);
-					print $Munin{HOST}."::".$fetch.".".$1.$delimiter.$3."\n" if(!$obj or ($1 eq $obj));
+					if ($zintegrate) {
+						print $3."\n" if(!$obj or ($1 eq $obj));
+					} else {
+						print $Munin{HOST}."::".$fetch.".".$1.$delimiter.$3."\n" if(!$obj or ($1 eq $obj));
+					}
 				}
 			} else {
 				last;
@@ -205,6 +212,7 @@ sub dispUsage {
 	print "  -d                  debug mode\n";
 	print "  -h                  display this help message\n";
 	print "  -v                  version\n";
+	print "  -z                  zabbix integrate mode\n";
 	print "\n";
 	return;
 }
